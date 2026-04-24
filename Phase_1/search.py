@@ -157,3 +157,48 @@ def binary_search_first_index(arr, target) -> int:
 
 print(binary_search_first_index([1, 3, 3, 3, 5, 7, 9], 3))
 print(binary_search_first_index([1, 3, 3, 3, 5, 7, 9], 6))
+
+
+'''
+延伸思考：二分的边界本质
+你现在已经实现了"找第一个"，思考一下：
+找最后一个 target 的下标，代码需要改哪里？
+    提示：找第一个时，找到 target 之后往左压缩。找最后一个呢？
+
+这两个问题合在一起，就是经典的：
+    给定 target, 找到它在数组中的 [左边界, 右边界]
+
+这在实际中非常有用，比如：
+    数据库查询: SELECT * FROM orders WHERE date = '2024-01-01' 本质上就是在索引里找一段连续区间的左右边界
+
+    统计某个值出现了多少次：右边界 - 左边界 + 1
+'''
+
+def binary_search_last_index(arr, target):
+    left = 0
+    right = len(arr) - 1
+
+    while (left <= right):
+        mid = (left + right) // 2
+        if (arr[mid] == target):
+            if (left == right):
+                return left
+            left = mid
+        elif (arr[mid] > target):
+            right = mid - 1
+        else:
+            left = mid + 1
+    return -1
+
+print(binary_search_last_index([1, 3, 3, 3, 5, 7, 9], 3))
+print(binary_search_last_index([1, 3, 3, 3, 5, 7, 9], 6))
+
+def binary_search_index_range(arr, target):
+    left_boundary = 0
+    right_boundary = len(arr) - 1
+    left_boundary = binary_search_first_index(arr, target)
+    right_boundary = binary_search_last_index(arr, target)
+
+    return (left_boundary, right_boundary)
+
+print(binary_search_index_range([1, 3, 3, 3, 5, 7, 9], 3))
