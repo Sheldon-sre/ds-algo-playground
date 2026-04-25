@@ -280,20 +280,20 @@ print(binary_search_index_range([1, 3, 3, 3, 5, 7, 9], 3))
 #             right = mid - 1
 #     return -1
 
-def max_length(L, k):
-    left = 1
-    right = L
+# def max_length(L, k):
+#     left = 1
+#     right = L
 
-    while(left < right - 1):
-        mid = (left + right) // 2
-        number = L // mid
-        if number == k:
-            left = mid
-        elif number > k:
-            left = mid + 1
-        else:
-            right = mid - 1
-    return left
+#     while(left < right - 1):
+#         mid = (left + right) // 2
+#         number = L // mid
+#         if number == k:
+#             left = mid
+#         elif number > k:
+#             left = mid + 1
+#         else:
+#             right = mid - 1
+#     return left
 
 # 根据我对于测试数据集的计算和观察，最后的死循环left一直等于mid，而且此时left和right之间只差1,
 # 所以说无论怎么mid = (left + right) // 2, 结果都是left，而left处就是答案，所以我修改了循环终止条件
@@ -302,6 +302,23 @@ def max_length(L, k):
     # 当 number > k 时，说明每段可以更长，mid 本身也是合法答案，直接 left = mid + 1 会跳过它
 # 隐患2：while left < right - 1 会漏掉一些情况
     # 当数组只剩两个元素时你直接退出了，但没有检验 right 处是否是更优的答案。
+
+def max_length(L, k):
+    left = 1
+    right = L
+
+    while left < right:
+        mid = (left + right + 1) // 2
+        number = L // mid
+
+        if number >= k:
+            left = mid
+        else:
+            right = mid - 1
+    return left
+# 这里 mid 的计算加了 1，这是"找右边界"的关键，思考一下
+# 如果 left = 1, right = 2，不加1时 mid = 1，然后 left = mid = 1，又死循环了。加1后 mid = 2，就能正常推进。
+# 在上一版本中, left最后一直等于mid, 循环无法结束，这里的方法，让left最后还可以更新一次，让left = mid == right, 循环结束
 print(max_length(10, 3))
 print(max_length(9, 3))
 print(max_length(9, 4))
