@@ -202,3 +202,106 @@ def binary_search_index_range(arr, target):
     return (left_boundary, right_boundary)
 
 print(binary_search_index_range([1, 3, 3, 3, 5, 7, 9], 3))
+
+
+'''
+真正的延伸：二分答案
+现在跳出"在数组里找值"的框架，看这个问题：
+    一根绳子要切成 k 段，每段长度相同，问每段最长能有多长？
+这个问题没有数组，但仍然可以用二分。
+
+核心问题： 什么东西具有单调性，可以被二分？
+    如果每段长度为 x, 能切出 k 段 → 那长度为 x-1 能切出 k 段吗？
+
+    如果每段长度为 x+1 , 能切出 k-1 段
+    如果每段长度为 x-1 , 能切出 k+1 段
+
+每次试探 mid 作为"每段长度"，然后问
+    以 mid 为每段长度，能切出几段？
+
+    然后根据切出的段数和 k 的关系，决定往左还是往右缩小范围
+
+关键问题
+二分结束后, left 停在哪里？它就是答案吗？
+这和第二题的"找边界"本质一样：你在找的是满足条件的最大的 mid。
+'''
+
+'''
+二分答案
+
+问题描述
+给定一根长度为 L 的绳子，要切成至少 k 段，每段长度必须相等且为整数。
+问每段最长能有多长？
+
+示例：
+输入：L = 10, k = 3
+输出：3
+解释：每段长3，可以切出3段（剩余1单位浪费），满足至少3段的要求
+
+输入：L = 9, k = 3
+输出：3
+解释：每段长3，恰好切出3段
+
+输入：L = 9, k = 4
+输出：2
+解释：每段长2，可以切出4段（剩余1单位浪费），满足至少4段的要求
+
+引导思考
+第一步：给定每段长度 x，能切出几段？
+    这个计算只需要一行，想想 L 和 x 怎么运算。
+
+第二步：二分空间是什么？
+    left = 1（每段至少长1）
+    right = L（每段最多长L，也就是不切）
+    每次试探 mid 作为每段长度，判断能切出几段。
+
+第三步：边界怎么更新？
+    如果以 mid 为每段长度，切出的段数 >= k → 说明什么？能不能让每段更长？
+    如果切出的段数 < k → 说明什么？
+第四步：你在找什么边界？
+    你在找满足"切出段数 >= k"的最大的 mid，对应第二题的"找最后一个"。
+    循环结束后，left 还是 right 是答案？
+'''
+
+# def max_length(L, k):
+#     left = 1
+#     right = L
+
+#     while(left <= right):
+#         mid = (left + right) // 2
+#         number = L // mid
+#         if (number == k):
+#             if (left == right):
+#                 return left
+#             left = mid
+#         elif (number > k):
+#             left = mid + 1
+#         else:
+#             right = mid - 1
+#     return -1
+
+def max_length(L, k):
+    left = 1
+    right = L
+
+    while(left < right - 1):
+        mid = (left + right) // 2
+        number = L // mid
+        if number == k:
+            left = mid
+        elif number > k:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return left
+
+# 根据我对于测试数据集的计算和观察，最后的死循环left一直等于mid，而且此时left和right之间只差1,
+# 所以说无论怎么mid = (left + right) // 2, 结果都是left，而left处就是答案，所以我修改了循环终止条件
+
+# 隐患1：number > k 时不应该 left = mid + 1
+    # 当 number > k 时，说明每段可以更长，mid 本身也是合法答案，直接 left = mid + 1 会跳过它
+# 隐患2：while left < right - 1 会漏掉一些情况
+    # 当数组只剩两个元素时你直接退出了，但没有检验 right 处是否是更优的答案。
+print(max_length(10, 3))
+print(max_length(9, 3))
+print(max_length(9, 4))
