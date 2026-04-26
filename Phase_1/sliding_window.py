@@ -63,3 +63,34 @@ k = 3
 
 print(normal_method(nums, k))
 print(sliding_window(nums, k))
+
+'''
+延伸思考
+这道题的窗口大小是固定的 k。
+但现实中很多问题的窗口大小是可变的，比如：
+    找最长的连续子数组，使得其中所有元素之和不超过 S
+这时候窗口需要动态伸缩, left 和 right 不再同步移动。这是滑动窗口最强大的形态，我们之后会遇到它。
+'''
+
+def longest_continuous_subarray(arr, s):
+    left = 0
+    right = 1
+    previous_sum = arr[0]
+    boundary = len(arr)
+    result = [arr[0]]
+    max_length = 0
+    while right < boundary:
+        while previous_sum <= s:
+            previous_sum = previous_sum + arr[right]
+            result.append(arr[right])
+            right += 1
+        previous_sum = previous_sum - arr[left]
+        if len(result) > max_length:
+            result.remove(arr[left])
+            max_length = len(result)
+        left += 1
+    return result
+nums = [1, 7, 3, 1, 5, 0, 1, 7]
+s = 10
+
+print(longest_continuous_subarray(nums, s))
