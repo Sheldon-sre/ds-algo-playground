@@ -61,3 +61,17 @@ target = 10
 
 print(normal_method(nums, target))
 print(two_pointers(nums, target))
+
+
+'''
+延伸思考
+这题数组是有序的，所以双指针直接可用。
+但如果题目变成
+    数组无序，找两个数之和等于 target
+
+你会怎么做？除了暴力O(n^2)，还有没有更好的方法？
+
+提示：当你遍历到 nums[i] 时，你需要快速知道 target - nums[i] 是否在数组里出现过。什么数据结构支持 O(1)查找？
+
+    先查哈希表，查不到再插入
+'''
