@@ -242,6 +242,36 @@ print(result)
 permutation_2(used_set,[])
 print(result2)
 
+
+'''
+变种2：组合总和
+
+给定 [2,3,6,7] 和目标值 7，找出所有和为 7 的组合
+
+这里需要剪枝：当当前和已经超过目标值时，没必要继续递归了。
+
+子集问题 + 剪枝
+'''
+result3 = []
+nums3 = [1,2,3,4,6,7]
+
+def combination_sum(start, sum, current):
+    if sum == 7:
+        return result3.append(current[:])
+    if sum > 7:
+        return
+    
+    for i in range(start, len(nums3)):
+        current.append(nums3[i])
+        sum += nums3[i]
+        combination_sum(i+1, sum, current)
+        current.pop()
+        sum -= nums3[i]
+
+
+combination_sum(0, 0, [])
+print(result3)
+
 '''
 进入 Phase 4：动态规划，这是整个算法学习中最重要也最难的部分。
 你在第11题已经接触到了记忆化搜索，动态规划其实就是把它翻转过来：
