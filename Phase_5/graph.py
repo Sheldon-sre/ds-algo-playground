@@ -60,18 +60,21 @@ def BFS_queue(graph):
     queue = deque()
 
     visited = set()
+    visited.add(0)
+
     result = []
 
     queue.append(0)
     
     while queue:
         visited_node = queue.popleft()
-        visited.add(visited_node)
         result.append(visited_node)
         for node in graph[visited_node]:
             if node in visited:
                 continue
             queue.append(node)
+            # 改为入队前标记
+            visited.add(node)
     return result
 
 
@@ -81,18 +84,20 @@ def DFS_recursion():
 def DFS_stack(graph):
     stack = [0]
     visited = set()
+    visited.add(0)
 
     result = []
 
     while stack:
         visited_node = stack.pop()
-        visited.add(visited_node)
         result.append(visited_node)
         # for node in graph[visited_node][::-1]:
         for node in graph[visited_node]:
             if node in visited:
                 continue
             stack.append(node)
+            # 改为入队时标记
+            visited.add(node)
 
     return result
 
