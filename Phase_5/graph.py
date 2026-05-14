@@ -133,3 +133,67 @@ while queue:
 
 DFS 的栈实现也有同样的问题，思考一下怎么改。
 '''
+
+'''
+第十八题：最短路径
+
+问题描述
+给定一个无权无向图，找出从节点 0 到所有其他节点的最短路径长度（以边数计算）。
+
+示例：
+graph = {
+    0: [1, 2],
+    1: [0, 3, 4],
+    2: [0, 5],
+    3: [1],
+    4: [1],
+    5: [2]
+}
+
+输出：{0: 0, 1: 1, 2: 1, 3: 2, 4: 2, 5: 2}
+解释：0到1需要1步，0到3需要2步...
+
+引导思考
+第一步：为什么BFS能找最短路？
+BFS按层扩散，第一次访问到某个节点时，走的一定是最少的步数。
+因为如果存在更短的路径，BFS早就通过那条路径先访问到了。
+
+第二步：怎么记录距离？
+在上一题的BFS基础上，用一个字典 dist 记录每个节点的距离：
+
+起点距离为 0
+每次从队列取出节点时，它的邻居距离 = 当前节点距离 + 1
+
+第三步：什么时候距离确定了？
+第一次访问到某个节点时，距离就确定了，不需要更新。
+'''
+
+def BFS_shortest_path(graph):
+
+    from collections import deque
+    queue = deque()
+    queue.append(0)
+
+    result = {0:0}
+    visited = set()
+    visited.add(0)
+
+    while queue:
+        visited_node = queue.popleft()
+        for node in graph[visited_node]:
+            if node in visited:
+                continue
+            queue.append(node)
+            visited.add(node)
+            result[node] = result[visited_node] + 1
+    return result
+
+graph = {
+    0: [1, 2],
+    1: [0, 3, 4],
+    2: [0, 5],
+    3: [1],
+    4: [1],
+    5: [2]
+}
+print(BFS_shortest_path(graph))
