@@ -197,3 +197,96 @@ graph = {
     5: [2]
 }
 print(BFS_shortest_path(graph))
+
+'''
+延伸思考
+这题是无权图的最短路，每条边的权重都是1。
+但现实中的图往往有权重，比如地图导航中每条路的距离不同。这时BFS就不够用了，需要：
+
+Dijkstra算法 —— 有权图的最短路
+
+它的核心思想和BFS很像，但用小顶堆代替普通队列，每次取出当前距离最小的节点。
+'''
+
+'''
+第十九题：Dijkstra算法
+
+问题描述
+给定一个有权有向图，找出从节点 0 到所有其他节点的最短路径长度。
+
+示例：
+graph = {
+    0: [(1, 4), (2, 1)],   # (邻居, 边权重)
+    1: [(3, 1)],
+    2: [(1, 2), (3, 5)],
+    3: []
+}
+
+输出：{0: 0, 1: 3, 2: 1, 3: 4}
+解释：
+0→1 直接走：4
+0→2→1 走：1+2=3 ✓ 更短
+0→2→1→3 走：1+2+1=4 ✓
+
+引导思考
+第一步：BFS为什么不够用了？
+无权图中每条边权重相同，BFS按层扩散天然保证最短。
+但有权图中，边权不同，层数少不代表距离短：
+0→1 直接1步，但权重4
+0→2→1 两步，但权重只有3
+
+第二步：Dijkstra的核心思想
+用小顶堆代替普通队列，每次取出当前距离最小的节点：
+    heap = [(距离, 节点)]
+贪心策略：当一个节点从堆中被取出时，它的最短距离已经确定了。
+    因为堆里其他路径的距离都比它大，不可能再找到更短的路。
+
+第三步：松弛操作
+对于取出的节点 u，遍历它的所有邻居 v：
+    如果 dist[u]+w(u,v)<dist[v]，则更新 dist[v]
+这叫松弛，是最短路算法的核心操作。
+
+第四步：初始化
+dist = {node: float('inf') for node in graph}
+dist[0] = 0
+heap = [(0, 0)]  # (距离, 节点)
+
+第五步：已确定的节点跳过
+同一个节点可能多次进入堆，取出时检查：
+if current_dist > dist[node]:
+    continue  # 已经找到更短路径，跳过
+    
+复杂度
+设节点数为 V，边数为 E：
+方法                    时间复杂度
+朴素Dijkstra            O(V^2)
+堆优化Dijkstra          O((V+E)log⁡V)
+'''
+import heapq
+def heap_optimized_dijkstra(graph):
+    dist = {node: float('inf') for node in graph}
+    dist[0] = 0
+    heap = [] # (距离, 节点) # 在小顶堆中会首先以元素第一个元素为基准排序
+    heapq.heappush(heap,(0, 0))
+
+    while heap:
+        dist_node = heapq.heappop(heap)
+        current_dist = dist_node[0]
+        if current_dist > dist[dist_node[1]]:
+            continue
+        for node_weight in graph[dist_node[1]]:
+            if dist[dist_node[1]] + node_weight[1] < dist[node_weight[0]]:
+                dist[node_weight[0]] = dist[dist_node[1]] + node_weight[1]
+                heapq.heappush(heap, (dist[node_weight[0]], node_weight[0])) # 移到if内部
+            # 一个小优化：松弛成功才需要入堆，否则会把无意义的节点压入堆：
+            # heapq.heappush(heap, (dist[node_weight[0]], node_weight[0]))
+    return dist
+# 有权有向图
+graph = {
+    0: [(1, 4), (2, 1)],   # (邻居, 边权重)
+    1: [(3, 1)],
+    2: [(1, 2), (3, 5)],
+    3: []
+}
+
+print(heap_optimized_dijkstra(graph))
