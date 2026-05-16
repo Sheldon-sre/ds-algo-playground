@@ -106,3 +106,37 @@ for a, b in prerequisites:
 for neighbor in graph[pop_node]:
     node_entry_degree[neighbor] -= 1
 '''
+
+'''
+第二十一题：KMP字符串匹配
+
+问题描述
+给定一个文本串 text 和一个模式串 pattern，找出 pattern 在 text 中第一次出现的位置，不存在则返回 -1。
+
+示例：
+输入：text = "ABABCABABABCABC", pattern = "ABABCABC"
+输出：7
+解释：从下标7开始的子串恰好是"ABABCABC"
+
+引导思考
+第一步：暴力法是什么？
+枚举 text 的每个位置作为起点，逐字符和 pattern 比较，时间复杂度是多少？
+'''
+
+def string_match(text, pattern):
+    for index_txt in range(len(text)):
+        index = index_txt
+        match = True
+        for index_patt in range(len(pattern)):
+            if index >= len(text) or text[index] != pattern[index_patt]:
+                match = False
+                break
+            index += 1
+        if match:
+            return index_txt
+    return -1 
+            
+
+text = "ABABCABABABCABC"
+pattern = "ABABCABC"
+print(string_match(text, pattern))
